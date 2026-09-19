@@ -2,8 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Payment - KCSE Revision Papers</title>  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">  <style>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -155,6 +154,36 @@
       cursor: not-allowed;
     }
 
+    /* WHATSAPP BUTTON */
+    .whatsapp-btn {
+      display: none;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      background: #25D366;
+      color: #fff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+      text-decoration: none;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    .whatsapp-btn:hover {
+      background: #20bd5a;
+    }
+
+    .whatsapp-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
     .message {
       display: none;
       text-align: center;
@@ -195,9 +224,11 @@
     }
   </style></head><body>  <header class="header"><!-- LOGO -->
 <!-- Keep logo.png in the same folder as payment.html -->
+
 <img src="logo.png" alt="Logo" class="logo">
 
 <h1>KCSE Revision Papers</h1>
+
 <p>Secure Payment</p>
 
   </header>  <main class="container"><div class="payment-card">
@@ -205,18 +236,36 @@
   <h2>Complete Payment</h2>
 
   <div class="selected-paper">
-    <div class="label">SELECTED PAPER</div>
-    <div class="name" id="paperName">Loading...</div>
+
+    <div class="label">
+      SELECTED PAPER
+    </div>
+
+    <div class="name" id="paperName">
+      Loading...
+    </div>
+
     <div class="code" id="paperCode"></div>
+
   </div>
 
   <div class="price-box">
-    <div class="price-label">Amount to Pay</div>
-    <div class="price">KSh 100</div>
+
+    <div class="price-label">
+      Amount to Pay
+    </div>
+
+    <div class="price">
+      KSh 100
+    </div>
+
   </div>
 
   <div class="form-group">
-    <label for="phone">M-Pesa Phone Number</label>
+
+    <label for="phone">
+      M-Pesa Phone Number
+    </label>
 
     <input
       type="tel"
@@ -225,17 +274,57 @@
       maxlength="10"
       autocomplete="tel"
     >
+
   </div>
 
-  <button class="pay-btn" id="payBtn" onclick="startPayment()">
+  <button
+    class="pay-btn"
+    id="payBtn"
+    onclick="startPayment()"
+  >
     Pay KSh 100
   </button>
 
-  <div class="message info" id="infoMessage"></div>
+  <!-- WHATSAPP BUTTON -->
+  <a
+    class="whatsapp-btn"
+    id="whatsappBtn"
+    href="#"
+    target="_blank"
+    rel="noopener"
+  >
 
-  <div class="message success" id="successMessage"></div>
+    <!-- WhatsApp Logo -->
+    <svg
+      class="whatsapp-icon"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill="#fff"
+        d="M16 3C8.82 3 3 8.82 3 16c0 2.29.6 4.45 1.75 6.36L3 29l6.83-1.72A12.94 12.94 0 0 0 16 29c7.18 0 13-5.82 13-13S23.18 3 16 3Zm0 23.65c-1.95 0-3.86-.52-5.53-1.5l-.4-.24-4.05 1.02 1.08-3.94-.26-.41A10.63 10.63 0 1 1 16 26.65Zm5.84-7.96c-.32-.16-1.9-.94-2.2-1.05-.3-.11-.52-.16-.74.16-.22.32-.84 1.05-1.03 1.27-.19.22-.38.24-.7.08-.32-.16-1.35-.5-2.58-1.6-.95-.85-1.6-1.9-1.79-2.22-.19-.32-.02-.49.14-.65.15-.15.32-.38.49-.57.16-.19.22-.32.32-.54.11-.22.05-.41-.03-.57-.08-.16-.74-1.78-1.01-2.44-.27-.65-.54-.56-.74-.57h-.63c-.22 0-.57.08-.87.41-.3.32-1.14 1.11-1.14 2.71s1.17 3.14 1.33 3.36c.16.22 2.3 3.51 5.57 4.92.78.34 1.39.54 1.87.69.79.25 1.5.21 2.07.13.63-.09 1.9-.78 2.17-1.54.27-.76.27-1.41.19-1.54-.08-.14-.3-.22-.62-.38Z"
+      />
+    </svg>
 
-  <div class="message error" id="errorMessage"></div>
+    Message Us on WhatsApp
+
+  </a>
+
+  <div
+    class="message info"
+    id="infoMessage"
+  ></div>
+
+  <div
+    class="message success"
+    id="successMessage"
+  ></div>
+
+  <div
+    class="message error"
+    id="errorMessage"
+  ></div>
 
   <div class="note">
     A payment prompt will be sent to your M-Pesa phone.
@@ -256,6 +345,13 @@
 
     const BACKEND_URL =
       "https://kcse-backend-x44v.onrender.com";
+
+    // ======================================================
+    // WHATSAPP NUMBER
+    // ======================================================
+
+    const WHATSAPP_NUMBER =
+      "254719821906";
 
     // ======================================================
     // GET SELECTED PAPER
@@ -307,6 +403,10 @@
         phoneInput.value.trim();
 
       hideMessages();
+
+      document.getElementById(
+        "whatsappBtn"
+      ).style.display = "none";
 
       if (!paper) {
 
@@ -404,6 +504,8 @@
 
         payBtn.textContent =
           "Waiting for Payment...";
+
+        statusAttempts = 0;
 
         // Start checking payment status
         checkPaymentStatus(
@@ -564,6 +666,34 @@
       payBtn.textContent =
         "Payment Successful";
 
+      // ----------------------------------------------------
+      // CREATE WHATSAPP MESSAGE
+      // ----------------------------------------------------
+
+      const whatsappMessage =
+        "Hello, I have successfully paid KSh 100 for " +
+        paper +
+        " (Subject Code: " +
+        (code || "N/A") +
+        "). Please send me the paper.";
+
+      const whatsappUrl =
+        "https://wa.me/" +
+        WHATSAPP_NUMBER +
+        "?text=" +
+        encodeURIComponent(whatsappMessage);
+
+      const whatsappBtn =
+        document.getElementById(
+          "whatsappBtn"
+        );
+
+      whatsappBtn.href =
+        whatsappUrl;
+
+      whatsappBtn.style.display =
+        "flex";
+
       // Save confirmation locally
       localStorage.setItem(
         "paymentCompleted",
@@ -594,6 +724,10 @@
 
       payBtn.textContent =
         "Pay KSh 100";
+
+      document.getElementById(
+        "whatsappBtn"
+      ).style.display = "none";
     }
 
     // ======================================================
