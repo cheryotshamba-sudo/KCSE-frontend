@@ -154,9 +154,11 @@
       cursor: not-allowed;
     }
 
-    /* WHATSAPP BUTTON */
+    /* ======================================================
+       WHATSAPP BUTTON
+       ====================================================== */
+
     .whatsapp-btn {
-      display: none;
       width: 100%;
       border: none;
       border-radius: 8px;
@@ -166,15 +168,21 @@
       font-family: inherit;
       font-size: 15px;
       font-weight: 700;
-      cursor: pointer;
+      cursor: not-allowed;
       margin-top: 12px;
-      text-decoration: none;
+      display: flex;
       align-items: center;
       justify-content: center;
       gap: 9px;
+      opacity: 0.65;
     }
 
-    .whatsapp-btn:hover {
+    .whatsapp-btn.unlocked {
+      cursor: pointer;
+      opacity: 1;
+    }
+
+    .whatsapp-btn.unlocked:hover {
       background: #20bd5a;
     }
 
@@ -285,13 +293,16 @@
     Pay KSh 100
   </button>
 
-  <!-- WHATSAPP BUTTON -->
-  <a
+  <!-- ==================================================
+       WHATSAPP BUTTON
+       Visible before payment but locked.
+       ================================================== -->
+
+  <button
     class="whatsapp-btn"
     id="whatsappBtn"
-    href="#"
-    target="_blank"
-    rel="noopener"
+    onclick="openWhatsApp()"
+    type="button"
   >
 
     <!-- WhatsApp Logo -->
@@ -307,9 +318,11 @@
       />
     </svg>
 
-    Message Us on WhatsApp
+    <span id="whatsappText">
+      🔒 Pay First to Message Us
+    </span>
 
-  </a>
+  </button>
 
   <div
     class="message info"
@@ -354,6 +367,12 @@
       "254719821906";
 
     // ======================================================
+    // PAYMENT STATE
+    // ======================================================
+
+    let paymentConfirmed = false;
+
+    // ======================================================
     // GET SELECTED PAPER
     // ======================================================
 
@@ -388,6 +407,74 @@
     }
 
     // ======================================================
+    // WHATSAPP
+    // ======================================================
+
+    function openWhatsApp() {
+
+      // ----------------------------------------------------
+      // BLOCK BEFORE PAYMENT
+      // ----------------------------------------------------
+
+      if (!paymentConfirmed) {
+
+        showInfo(
+          "Please complete payment first to message us on WhatsApp."
+        );
+
+        return;
+      }
+
+      // ----------------------------------------------------
+      // ALLOW AFTER PAYMENT
+      // ----------------------------------------------------
+
+      const whatsappMessage =
+        "Hello, I have successfully paid KSh 100 for " +
+        paper +
+        " (Subject Code: " +
+        (code || "N/A") +
+        "). Please send me the paper.";
+
+      const whatsappUrl =
+        "https://wa.me/" +
+        WHATSAPP_NUMBER +
+        "?text=" +
+        encodeURIComponent(whatsappMessage);
+
+      window.open(
+        whatsappUrl,
+        "_blank"
+      );
+    }
+
+    // ======================================================
+    // UNLOCK WHATSAPP
+    // ======================================================
+
+    function unlockWhatsApp() {
+
+      paymentConfirmed = true;
+
+      const whatsappBtn =
+        document.getElementById(
+          "whatsappBtn"
+        );
+
+      const whatsappText =
+        document.getElementById(
+          "whatsappText"
+        );
+
+      whatsappBtn.classList.add(
+        "unlocked"
+      );
+
+      whatsappText.textContent =
+        "Message Us on WhatsApp";
+    }
+
+    // ======================================================
     // START PAYMENT
     // ======================================================
 
@@ -403,10 +490,6 @@
         phoneInput.value.trim();
 
       hideMessages();
-
-      document.getElementById(
-        "whatsappBtn"
-      ).style.display = "none";
 
       if (!paper) {
 
@@ -667,32 +750,10 @@
         "Payment Successful";
 
       // ----------------------------------------------------
-      // CREATE WHATSAPP MESSAGE
+      // UNLOCK WHATSAPP ONLY AFTER CONFIRMED PAYMENT
       // ----------------------------------------------------
 
-      const whatsappMessage =
-        "Hello, I have successfully paid KSh 100 for " +
-        paper +
-        " (Subject Code: " +
-        (code || "N/A") +
-        "). Please send me the paper.";
-
-      const whatsappUrl =
-        "https://wa.me/" +
-        WHATSAPP_NUMBER +
-        "?text=" +
-        encodeURIComponent(whatsappMessage);
-
-      const whatsappBtn =
-        document.getElementById(
-          "whatsappBtn"
-        );
-
-      whatsappBtn.href =
-        whatsappUrl;
-
-      whatsappBtn.style.display =
-        "flex";
+      unlockWhatsApp();
 
       // Save confirmation locally
       localStorage.setItem(
@@ -724,10 +785,6 @@
 
       payBtn.textContent =
         "Pay KSh 100";
-
-      document.getElementById(
-        "whatsappBtn"
-      ).style.display = "none";
     }
 
     // ======================================================
