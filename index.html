@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>KCSE Revision Papers</title>  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7fb;
+      color: #111827;
+    }
+
+    .header {
+      background: #003b70;
+      padding: 18px 15px 20px;
+      text-align: center;
+      border-bottom: 5px solid #c8102e;
+    }
+
+    .logo {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 10px;
+      background: #fff;
+      border-radius: 50%;
+      padding: 5px;
+    }
+
+    .header h1 {
+      color: #fff;
+      font-size: 21px;
+      font-weight: 700;
+    }
+
+    .header p {
+      color: #e8eef5;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px 15px 30px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .intro h2 {
+      color: #003b70;
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .intro p {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .paper {
+      background: #fff;
+      border-radius: 12px;
+      padding: 17px;
+      margin-bottom: 14px;
+      border-left: 5px solid #c8102e;
+      box-shadow: 0 3px 12px rgba(0, 59, 112, 0.10);
+    }
+
+    .paper-title {
+      color: #003b70;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .paper-code {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 13px;
+    }
+
+    .price {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 13px;
+    }
+
+    .buy-btn {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      background: #003b70;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .buy-btn:hover {
+      background: #002d55;
+    }
+
+    .buy-btn:active {
+      transform: scale(0.98);
+    }
+
+    .footer {
+      text-align: center;
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 15px;
+    }
+  </style></head><body>  <header class="header"><!-- LOGO -->
+<!-- Keep logo.png in the same folder as index.html -->
+<img src="logo.png" alt="Logo" class="logo">
+
+<h1>KCSE Revision Papers</h1>
+<p>Quality revision materials for students</p>
+
+  </header>  <main class="container"><div class="intro">
+  <h2>Available Papers</h2>
+  <p>Select the paper you want to access.</p>
+</div>
+
+<!-- ENGLISH PAPER 1 -->
+<div class="paper">
+  <div class="paper-title">English Paper 1</div>
+  <div class="paper-code">Subject Code: 101/1</div>
+  <div class="price">Revision Paper</div>
+
+  <button class="buy-btn" onclick="buyPaper('English Paper 1')">
+    Get Paper
+  </button>
+</div>
+
+<!-- CHEMISTRY PAPER 1 -->
+<div class="paper">
+  <div class="paper-title">Chemistry Paper 1</div>
+  <div class="paper-code">Subject Code: 233/1</div>
+  <div class="price">Revision Paper</div>
+
+  <button class="buy-btn" onclick="buyPaper('Chemistry Paper 1')">
+    Get Paper
+  </button>
+</div>
+
+<div class="footer">
+  © 2026 KCSE Revision Papers
+</div>
+
+  </main>  <script>
+    function buyPaper(paper) {
+      localStorage.setItem("selectedPaper", paper);
+
+      /*
+        Payment page will be connected here.
+        After successful payment, the buyer can
+        message you to receive the paper.
+      */
+
+      alert("You selected: " + paper);
+    }
+  </script></body>
+</html>
