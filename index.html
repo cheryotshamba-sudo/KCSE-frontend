@@ -142,7 +142,7 @@
   <div class="paper-code">Subject Code: 101/1</div>
   <div class="price">Revision Paper</div>
 
-  <button class="buy-btn" onclick="buyPaper('English Paper 1')">
+  <button class="buy-btn" onclick="selectPaper('English Paper 1', '101/1')">
     Get Paper
   </button>
 </div>
@@ -153,7 +153,7 @@
   <div class="paper-code">Subject Code: 233/1</div>
   <div class="price">Revision Paper</div>
 
-  <button class="buy-btn" onclick="buyPaper('Chemistry Paper 1')">
+  <button class="buy-btn" onclick="selectPaper('Chemistry Paper 1', '233/1')">
     Get Paper
   </button>
 </div>
@@ -163,16 +163,13 @@
 </div>
 
   </main>  <script>
-    function buyPaper(paper) {
+    function selectPaper(paper, code) {
       localStorage.setItem("selectedPaper", paper);
+      localStorage.setItem("selectedPaperCode", code);
 
-      /*
-        Payment page will be connected here.
-        After successful payment, the buyer can
-        message you to receive the paper.
-      */
-
-      alert("You selected: " + paper);
+      window.location.href =
+        "payment.html?paper=" + encodeURIComponent(paper) +
+        "&code=" + encodeURIComponent(code);
     }
   </script></body>
 </html>
