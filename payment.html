@@ -222,7 +222,7 @@
       type="tel"
       id="phone"
       placeholder="07XXXXXXXX"
-      maxlength="12"
+      maxlength="10"
       autocomplete="tel"
     >
   </div>
@@ -231,19 +231,15 @@
     Pay KSh 100
   </button>
 
-  <div class="message info" id="infoMessage">
-    Check your phone and enter your M-Pesa PIN to complete the payment.
-  </div>
+  <div class="message info" id="infoMessage"></div>
 
-  <div class="message success" id="successMessage">
-    Payment successful. Please message us to receive your paper.
-  </div>
+  <div class="message success" id="successMessage"></div>
 
   <div class="message error" id="errorMessage"></div>
 
   <div class="note">
-    After successful payment, you will be instructed on how to receive
-    the selected revision paper.
+    A payment prompt will be sent to your M-Pesa phone.
+    Complete the payment using your M-Pesa PIN.
   </div>
 
 </div>
@@ -255,10 +251,18 @@
   </main>  <script>
 
     // ======================================================
+    // BACKEND
+    // ======================================================
+
+    const BACKEND_URL =
+      "https://kcse-backend-x44v.onrender.com";
+
+    // ======================================================
     // GET SELECTED PAPER
     // ======================================================
 
-    const params = new URLSearchParams(window.location.search);
+    const params =
+      new URLSearchParams(window.location.search);
 
     const paper =
       params.get("paper") ||
@@ -269,87 +273,117 @@
       localStorage.getItem("selectedPaperCode");
 
     if (paper) {
-      document.getElementById("paperName").textContent = paper;
+
+      document.getElementById("paperName")
+        .textContent = paper;
+
     } else {
-      document.getElementById("paperName").textContent =
-        "No paper selected";
+
+      document.getElementById("paperName")
+        .textContent = "No paper selected";
+
     }
 
     if (code) {
-      document.getElementById("paperCode").textContent =
-        "Subject Code: " + code;
+
+      document.getElementById("paperCode")
+        .textContent = "Subject Code: " + code;
+
     }
 
     // ======================================================
-    // PAYMENT
+    // START PAYMENT
     // ======================================================
 
     async function startPayment() {
 
-      const phoneInput = document.getElementById("phone");
-      const payBtn = document.getElementById("payBtn");
+      const phoneInput =
+        document.getElementById("phone");
 
-      const phone = phoneInput.value.trim();
+      const payBtn =
+        document.getElementById("payBtn");
+
+      const phone =
+        phoneInput.value.trim();
 
       hideMessages();
 
       if (!paper) {
-        showError("Please select a paper first.");
+
+        showError(
+          "Please select a paper first."
+        );
+
         return;
       }
 
       if (!phone) {
-        showError("Please enter your M-Pesa phone number.");
+
+        showError(
+          "Please enter your M-Pesa phone number."
+        );
+
         phoneInput.focus();
+
         return;
       }
 
-      // Accept 07XXXXXXXX or 01XXXXXXXX
       if (!/^(07|01)\d{8}$/.test(phone)) {
-        showError("Enter a valid Kenyan M-Pesa number.");
+
+        showError(
+          "Enter a valid Kenyan M-Pesa number."
+        );
+
         phoneInput.focus();
+
         return;
       }
 
       payBtn.disabled = true;
-      payBtn.textContent = "Processing...";
+
+      payBtn.textContent =
+        "Sending Payment...";
 
       showInfo(
-        "Sending payment request. Please wait..."
+        "Sending STK Push. Please wait..."
       );
 
       try {
 
-        /*
-          IMPORTANT:
+        const response =
+          await fetch(
+            BACKEND_URL + "/api/payment",
+            {
+              method: "POST",
 
-          Do NOT put your Paylor API key here.
+              headers: {
+                "Content-Type": "application/json"
+              },
 
-          The frontend will call YOUR backend.
-          Your backend will communicate with Paylor.
-        */
+              body: JSON.stringify({
 
-        const response = await fetch(
-          "YOUR_BACKEND_URL/api/payment",
-          {
-            method: "POST",
+                phone: phone,
 
-            headers: {
-              "Content-Type": "application/json"
-            },
+                amount: 100,
 
-            body: JSON.stringify({
-              phone: phone,
-              amount: 100,
-              paper: paper,
-              paperCode: code
-            })
-          }
+                paper: paper,
+
+                paperCode: code
+
+              })
+            }
+          );
+
+        const data =
+          await response.json();
+
+        console.log(
+          "Payment response:",
+          data
         );
 
-        const data = await response.json();
-
         if (!response.ok) {
+
           throw new Error(
             data.message ||
             data.error ||
@@ -357,35 +391,31 @@
           );
         }
 
-        if (
-          data.success === true ||
-          data.status === "PENDING" ||
-          data.status === "pending"
-        ) {
-
-          showInfo(
-            "STK Push sent successfully. Check your phone and enter your M-Pesa PIN."
-          );
-
-          payBtn.textContent = "Waiting for Payment...";
-
-          /*
-            Payment-status polling will be added here
-            after the Paylor backend endpoint is connected.
-          */
-
-        } else {
+        if (!data.reference) {
 
           throw new Error(
-            data.message ||
-            "Unable to start payment."
+            "Payment reference was not returned."
           );
-
         }
+
+        showInfo(
+          "STK Push sent successfully. Check your phone and enter your M-Pesa PIN."
+        );
+
+        payBtn.textContent =
+          "Waiting for Payment...";
+
+        // Start checking payment status
+        checkPaymentStatus(
+          data.reference
+        );
 
       } catch (error) {
 
-        console.error("Payment error:", error);
+        console.error(
+          "Payment error:",
+          error
+        );
 
         showError(
           error.message ||
@@ -393,8 +423,177 @@
         );
 
         payBtn.disabled = false;
-        payBtn.textContent = "Pay KSh 100";
+
+        payBtn.textContent =
+          "Pay KSh 100";
       }
+    }
+
+    // ======================================================
+    // CHECK PAYMENT STATUS
+    // ======================================================
+
+    let statusAttempts = 0;
+
+    const MAX_STATUS_ATTEMPTS = 60;
+
+    async function checkPaymentStatus(reference) {
+
+      statusAttempts++;
+
+      try {
+
+        const response =
+          await fetch(
+            BACKEND_URL +
+            "/api/payment-status/" +
+            encodeURIComponent(reference)
+          );
+
+        const data =
+          await response.json();
+
+        console.log(
+          "Payment status:",
+          data
+        );
+
+        // --------------------------------------------------
+        // COMPLETED
+        // --------------------------------------------------
+
+        if (
+          data.status === "COMPLETED"
+        ) {
+
+          paymentSuccessful();
+
+          return;
+        }
+
+        // --------------------------------------------------
+        // FAILED
+        // --------------------------------------------------
+
+        if (
+          data.status === "FAILED"
+        ) {
+
+          showError(
+            "Payment failed or was cancelled. Please try again."
+          );
+
+          resetPaymentButton();
+
+          return;
+        }
+
+        // --------------------------------------------------
+        // STILL PENDING
+        // --------------------------------------------------
+
+        if (
+          statusAttempts < MAX_STATUS_ATTEMPTS
+        ) {
+
+          setTimeout(
+            () => checkPaymentStatus(reference),
+            3000
+          );
+
+        } else {
+
+          showError(
+            "We could not confirm the payment yet. If you completed the payment, please wait a moment and try again."
+          );
+
+          resetPaymentButton();
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Status check error:",
+          error
+        );
+
+        if (
+          statusAttempts < MAX_STATUS_ATTEMPTS
+        ) {
+
+          setTimeout(
+            () => checkPaymentStatus(reference),
+            5000
+          );
+
+        } else {
+
+          showError(
+            "Unable to confirm payment status. Please try again."
+          );
+
+          resetPaymentButton();
+        }
+      }
+    }
+
+    // ======================================================
+    // PAYMENT SUCCESS
+    // ======================================================
+
+    function paymentSuccessful() {
+
+      hideMessages();
+
+      document.getElementById(
+        "successMessage"
+      ).textContent =
+        "Payment successful! Please message us to receive your " +
+        paper +
+        ".";
+
+      document.getElementById(
+        "successMessage"
+      ).style.display = "block";
+
+      const payBtn =
+        document.getElementById("payBtn");
+
+      payBtn.disabled = true;
+
+      payBtn.textContent =
+        "Payment Successful";
+
+      // Save confirmation locally
+      localStorage.setItem(
+        "paymentCompleted",
+        "true"
+      );
+
+      localStorage.setItem(
+        "paidPaper",
+        paper
+      );
+
+      localStorage.setItem(
+        "paidPaperCode",
+        code || ""
+      );
+    }
+
+    // ======================================================
+    // RESET BUTTON
+    // ======================================================
+
+    function resetPaymentButton() {
+
+      const payBtn =
+        document.getElementById("payBtn");
+
+      payBtn.disabled = false;
+
+      payBtn.textContent =
+        "Pay KSh 100";
     }
 
     // ======================================================
@@ -402,22 +601,41 @@
     // ======================================================
 
     function hideMessages() {
-      document.getElementById("infoMessage").style.display = "none";
-      document.getElementById("successMessage").style.display = "none";
-      document.getElementById("errorMessage").style.display = "none";
+
+      document.getElementById(
+        "infoMessage"
+      ).style.display = "none";
+
+      document.getElementById(
+        "successMessage"
+      ).style.display = "none";
+
+      document.getElementById(
+        "errorMessage"
+      ).style.display = "none";
     }
 
     function showInfo(message) {
-      const box = document.getElementById("infoMessage");
+
+      const box =
+        document.getElementById(
+          "infoMessage"
+        );
 
       box.textContent = message;
+
       box.style.display = "block";
     }
 
     function showError(message) {
-      const box = document.getElementById("errorMessage");
+
+      const box =
+        document.getElementById(
+          "errorMessage"
+        );
 
       box.textContent = message;
+
       box.style.display = "block";
     }
 
