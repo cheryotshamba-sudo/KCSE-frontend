@@ -1,1 +1,425 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Payment - KCSE Revision Papers</title>  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7fb;
+      color: #111827;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #003b70;
+      padding: 18px 15px 20px;
+      text-align: center;
+      border-bottom: 5px solid #c8102e;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 9px;
+      background: #fff;
+      border-radius: 50%;
+      padding: 5px;
+    }
+
+    .header h1 {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .header p {
+      color: #e8eef5;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px 15px 30px;
+    }
+
+    .payment-card {
+      background: #fff;
+      border-radius: 13px;
+      padding: 20px;
+      box-shadow: 0 3px 12px rgba(0, 59, 112, 0.10);
+    }
+
+    .payment-card h2 {
+      color: #003b70;
+      font-size: 20px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .selected-paper {
+      background: #eef4fa;
+      border-left: 5px solid #c8102e;
+      border-radius: 8px;
+      padding: 13px;
+      margin-bottom: 20px;
+    }
+
+    .selected-paper .label {
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 3px;
+    }
+
+    .selected-paper .name {
+      color: #003b70;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .selected-paper .code {
+      color: #64748b;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .price-box {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .price-label {
+      color: #64748b;
+      font-size: 12px;
+    }
+
+    .price {
+      color: #003b70;
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 7px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: #003b70;
+    }
+
+    .pay-btn {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      background: #003b70;
+      color: #fff;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .pay-btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .message {
+      display: none;
+      text-align: center;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+
+    .info {
+      background: #eef4fa;
+      color: #003b70;
+    }
+
+    .success {
+      background: #eaf7ee;
+      color: #166534;
+    }
+
+    .error {
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+
+    .note {
+      text-align: center;
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 15px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      text-align: center;
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 18px;
+    }
+  </style></head><body>  <header class="header"><!-- LOGO -->
+<!-- Keep logo.png in the same folder as payment.html -->
+<img src="logo.png" alt="Logo" class="logo">
+
+<h1>KCSE Revision Papers</h1>
+<p>Secure Payment</p>
+
+  </header>  <main class="container"><div class="payment-card">
+
+  <h2>Complete Payment</h2>
+
+  <div class="selected-paper">
+    <div class="label">SELECTED PAPER</div>
+    <div class="name" id="paperName">Loading...</div>
+    <div class="code" id="paperCode"></div>
+  </div>
+
+  <div class="price-box">
+    <div class="price-label">Amount to Pay</div>
+    <div class="price">KSh 100</div>
+  </div>
+
+  <div class="form-group">
+    <label for="phone">M-Pesa Phone Number</label>
+
+    <input
+      type="tel"
+      id="phone"
+      placeholder="07XXXXXXXX"
+      maxlength="12"
+      autocomplete="tel"
+    >
+  </div>
+
+  <button class="pay-btn" id="payBtn" onclick="startPayment()">
+    Pay KSh 100
+  </button>
+
+  <div class="message info" id="infoMessage">
+    Check your phone and enter your M-Pesa PIN to complete the payment.
+  </div>
+
+  <div class="message success" id="successMessage">
+    Payment successful. Please message us to receive your paper.
+  </div>
+
+  <div class="message error" id="errorMessage"></div>
+
+  <div class="note">
+    After successful payment, you will be instructed on how to receive
+    the selected revision paper.
+  </div>
+
+</div>
+
+<div class="footer">
+  © 2026 KCSE Revision Papers
+</div>
+
+  </main>  <script>
+
+    // ======================================================
+    // GET SELECTED PAPER
+    // ======================================================
+
+    const params = new URLSearchParams(window.location.search);
+
+    const paper =
+      params.get("paper") ||
+      localStorage.getItem("selectedPaper");
+
+    const code =
+      params.get("code") ||
+      localStorage.getItem("selectedPaperCode");
+
+    if (paper) {
+      document.getElementById("paperName").textContent = paper;
+    } else {
+      document.getElementById("paperName").textContent =
+        "No paper selected";
+    }
+
+    if (code) {
+      document.getElementById("paperCode").textContent =
+        "Subject Code: " + code;
+    }
+
+    // ======================================================
+    // PAYMENT
+    // ======================================================
+
+    async function startPayment() {
+
+      const phoneInput = document.getElementById("phone");
+      const payBtn = document.getElementById("payBtn");
+
+      const phone = phoneInput.value.trim();
+
+      hideMessages();
+
+      if (!paper) {
+        showError("Please select a paper first.");
+        return;
+      }
+
+      if (!phone) {
+        showError("Please enter your M-Pesa phone number.");
+        phoneInput.focus();
+        return;
+      }
+
+      // Accept 07XXXXXXXX or 01XXXXXXXX
+      if (!/^(07|01)\d{8}$/.test(phone)) {
+        showError("Enter a valid Kenyan M-Pesa number.");
+        phoneInput.focus();
+        return;
+      }
+
+      payBtn.disabled = true;
+      payBtn.textContent = "Processing...";
+
+      showInfo(
+        "Sending payment request. Please wait..."
+      );
+
+      try {
+
+        /*
+          IMPORTANT:
+
+          Do NOT put your Paylor API key here.
+
+          The frontend will call YOUR backend.
+          Your backend will communicate with Paylor.
+        */
+
+        const response = await fetch(
+          "YOUR_BACKEND_URL/api/payment",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              phone: phone,
+              amount: 100,
+              paper: paper,
+              paperCode: code
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message ||
+            data.error ||
+            "Payment request failed."
+          );
+        }
+
+        if (
+          data.success === true ||
+          data.status === "PENDING" ||
+          data.status === "pending"
+        ) {
+
+          showInfo(
+            "STK Push sent successfully. Check your phone and enter your M-Pesa PIN."
+          );
+
+          payBtn.textContent = "Waiting for Payment...";
+
+          /*
+            Payment-status polling will be added here
+            after the Paylor backend endpoint is connected.
+          */
+
+        } else {
+
+          throw new Error(
+            data.message ||
+            "Unable to start payment."
+          );
+
+        }
+
+      } catch (error) {
+
+        console.error("Payment error:", error);
+
+        showError(
+          error.message ||
+          "Something went wrong. Please try again."
+        );
+
+        payBtn.disabled = false;
+        payBtn.textContent = "Pay KSh 100";
+      }
+    }
+
+    // ======================================================
+    // MESSAGES
+    // ======================================================
+
+    function hideMessages() {
+      document.getElementById("infoMessage").style.display = "none";
+      document.getElementById("successMessage").style.display = "none";
+      document.getElementById("errorMessage").style.display = "none";
+    }
+
+    function showInfo(message) {
+      const box = document.getElementById("infoMessage");
+
+      box.textContent = message;
+      box.style.display = "block";
+    }
+
+    function showError(message) {
+      const box = document.getElementById("errorMessage");
+
+      box.textContent = message;
+      box.style.display = "block";
+    }
+
+  </script></body>
+</html>
